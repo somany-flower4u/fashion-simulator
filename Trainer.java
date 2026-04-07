@@ -138,20 +138,6 @@ public class Trainer {
         return mvp;
     }
 
-    // 유효 입력 헬퍼
-    private int getValidInput(Scanner scanner, int min, int max) {
-        while (true) {
-            try {
-                String line = scanner.nextLine().trim();
-                int val = Integer.parseInt(line);
-                if (val >= min && val <= max) return val;
-                System.out.printf("   ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.printf("   ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            }
-        }
-    }
-
     // Getter
     public String getName() { return name; }
     public Pokemon[] getParty() { return party; }
