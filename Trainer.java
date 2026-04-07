@@ -5,12 +5,14 @@ public class Trainer {
     private Pokemon[] party;
     private int activePokemonIndex;
     private boolean isPlayer;
+    private AIStrategy aiStrategy;
 
     public Trainer(String name, Pokemon[] party, boolean isPlayer) {
         this.name = name;
         this.party = party;
         this.activePokemonIndex = 0;
         this.isPlayer = isPlayer;
+        this.aiStrategy = isPlayer ? null : new BasicAIStrategy();
     }
 
     // 현재 활성 포켓몬
@@ -94,7 +96,7 @@ public class Trainer {
             printPartyStatus();
             while (true) {
                 System.out.print("▶ 번호 입력: ");
-                int choice = getValidInput(scanner, 1, party.length);
+                int choice = GameUtils.getValidInput(1, party.length);
                 if (party[choice - 1].isAlive() && (choice - 1) != activePokemonIndex) {
                     activePokemonIndex = choice - 1;
                     System.out.println("   ▸ " + name + "은(는) " + getActivePokemon().getDisplayName() + "을(를) 보냈다!");
@@ -154,4 +156,14 @@ public class Trainer {
     public String getName() { return name; }
     public Pokemon[] getParty() { return party; }
     public boolean isPlayer() { return isPlayer; }
+    public AIStrategy getAIStrategy() { return aiStrategy; }
+    public void setAIStrategy(AIStrategy strategy) { this.aiStrategy = strategy; }
+
+    /**
+     * 지정된 인덱스의 포켓몬 조회 (Encapsulation)
+     */
+    public Pokemon getPokemon(int index) {
+        if (index < 0 || index >= party.length) return null;
+        return party[index];
+    }
 }

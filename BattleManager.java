@@ -27,7 +27,7 @@ public class BattleManager {
         System.out.println("╚══════════════════════════════════════════════╝");
         System.out.println("  🔵 " + player.getName() + "의 " + player.getActivePokemon().getDisplayName() + " VS "
                 + rival.getActivePokemon().getDisplayName() + " " + rival.getName() + "의 🔴");
-        pause(1000);
+        GameUtils.pause(1000);
     }
 
     // 메인 배틀 루프
@@ -71,7 +71,7 @@ public class BattleManager {
             // 쓰러진 포켓몬 처리
             handleFainted();
 
-            pause(500);
+            GameUtils.pause(500);
         }
     }
 
@@ -101,7 +101,7 @@ public class BattleManager {
         System.out.println("    1. ⚔️  공격");
         System.out.println("    2. 🔄 포켓몬 교체");
         System.out.print("  ▶ 선택: ");
-        return getValidInput(1, 2);
+        return GameUtils.getValidInput(1, 2);
     }
 
     // 플레이어 스킬 선택
@@ -118,7 +118,7 @@ public class BattleManager {
 
         while (true) {
             System.out.print("  ▶ 선택: ");
-            int choice = getValidInput(1, 4);
+            int choice = GameUtils.getValidInput(1, 4);
             if (skills[choice - 1] != null && skills[choice - 1].canUse()) {
                 return choice - 1;
             }
@@ -133,8 +133,8 @@ public class BattleManager {
 
         while (true) {
             System.out.print("  ▶ 번호 입력: ");
-            int choice = getValidInput(1, 3);
-            Pokemon target = player.getParty()[choice - 1];
+            int choice = GameUtils.getValidInput(1, 3);
+            Pokemon target = player.getPokemon(choice - 1);
             if (target == player.getActivePokemon()) {
                 System.out.println("    ❌ 이미 나가있는 포켓몬입니다.");
             } else if (!target.isAlive()) {
@@ -147,25 +147,7 @@ public class BattleManager {
 
     // AI 행동 결정
     private int getRivalAction() {
-        Pokemon rivalActive = rival.getActivePokemon();
-        Pokemon playerActive = player.getActivePokemon();
-
-        // HP가 30% 이하이고, 상성 불리하면 교체 고려
-        double hpRatio = (double) rivalActive.getCurrentHp() / rivalActive.getMaxHp();
-        double typeEff = playerActive.getType().getEffectiveness(rivalActive.getType());
-
-        if (hpRatio < 0.3 && typeEff >= 2.0 && rival.getAliveCount() > 1) {
-            int bestSwitch = rival.chooseBestSwitch(playerActive);
-            if (bestSwitch >= 0) {
-                // 교체 대상이 현재보다 나은지 확인
-                Pokemon switchTarget = rival.getParty()[bestSwitch];
-                double newTypeEff = playerActive.getType().getEffectiveness(switchTarget.getType());
-                if (newTypeEff < typeEff) {
-                    return 2; // 교체
-                }
-            }
-        }
-        return 1; // 공격
+        return rival.getAIStrategy().decideTurn(rival, player);
     }
 
     // 턴 실행
@@ -175,12 +157,12 @@ public class BattleManager {
         if (pAction == 2) {
             player.switchPokemon(pSwitch);
             System.out.println("  🔵 " + player.getName() + "은(는) " + player.getActivePokemon().getDisplayName() + "(으)로 교체했다!");
-            pause(500);
+            GameUtils.pause(500);
         }
         if (rAction == 2 && rSwitch >= 0) {
             rival.switchPokemon(rSwitch);
             System.out.println("  🔴 " + rival.getName() + "은(는) " + rival.getActivePokemon().getDisplayName() + "(으)로 교체했다!");
-            pause(500);
+            GameUtils.pause(500);
         }
 
         // 2단계: 공격 처리
@@ -258,7 +240,7 @@ public class BattleManager {
         skill.usePP();
 
         System.out.println("\n  " + tag + " " + atkPokemon.getName() + "의 " + skill.getName() + "!");
-        pause(400);
+        GameUtils.pause(400);
 
         // 명중 판정
         if (!skill.tryHit()) {
@@ -282,7 +264,7 @@ public class BattleManager {
             atkPokemon.addKill();
         }
 
-        pause(300);
+        GameUtils.pause(300);
     }
 
     // 쓰러진 포켓몬 처리
@@ -324,27 +306,5 @@ public class BattleManager {
 
         System.out.println("═══════════════════════════════════════");
     }
-
-    // 입력 유효성 검사
-    private int getValidInput(int min, int max) {
-        while (true) {
-            try {
-                String line = scanner.nextLine().trim();
-                int val = Integer.parseInt(line);
-                if (val >= min && val <= max) return val;
-                System.out.printf("    ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.printf("    ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            }
-        }
-    }
-
-    // 딜레이
-    private void pause(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            // 무시
-        }
-    }
 }
+

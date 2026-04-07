@@ -25,11 +25,14 @@
 | **BattleManager** | 배틀 로직 관리 (턴 시스템, 승패 판정) |
 | **Skill** | 포켓몬이 사용할 스킬 (데미지 계산, PP 관리) |
 | **Type** | 타입 열거형 (상성 계산) |
+| **GameUtils** | 공용 유틸리티 메서드 통합 |
+| **AIStrategy** (인터페이스) | AI 행동 결정 전략 |
+| **BasicAIStrategy** | 기본 AI 전략 구현 |
 
 ### 디자인 패턴
 
 - **Factory Pattern**: `PokemonFactory` - 다양한 포켓몬 객체 생성
-- **Strategy Pattern**: `Pokemon` 추상 클래스와 타입별 구체적 클래스
+- **Strategy Pattern**: `AIStrategy` 인터페이스 - AI 행동 결정 로직 분리
 - **Enum Pattern**: `Type` - 타입 관리 및 상성 계산
 
 ## 🎮 게임 플레이
@@ -122,7 +125,71 @@ java Main
 3. **상태 관리**: Trainer, BattleManager를 통한 게임 상태 관리
 4. **알고리즘**: AI의 최적 선택지 계산, 데미지 계산식 등
 
-## 📌 추후 개선 사항 (선택사항)
+## � 디자인 패턴 개선 사항
+
+### 1. **Util 클래스 통합** ✅
+- **문제**: `pause()`, `getValidInput()`, `getRandomOrder()` 메서드가 여러 클래스(Main, BattleManager, Trainer)에서 중복되었음
+- **해결**: `GameUtils` 클래스로 통합하여 DRY 원칙 준수
+- **파일**: `GameUtils.java` 신규 생성
+- **영향**: Main, BattleManager에서 공통 메서드 제거
+
+### 2. **Encapsulation 개선** ✅
+- **문제**: `Trainer.getParty()`에서 배열을 직접 반환하여 캡슐화 원칙 위반
+- **해결**: 
+  - `getPokemon(int index)` 메서드 추가로 특정 포켓몬 접근 제한
+  - BattleManager의 `getParty()[index]` 호출을 `getPokemon(index)`로 변경
+- **영향**: 배열 무결성 보호 및 접근 제어 강화
+
+### 3. **Strategy 패턴 적용** ✅
+- **문제**: BattleManager에서 AI 행동 결정 로직이 혼재되어 있음
+- **해결**:
+  - `AIStrategy` 인터페이스 신규 생성
+  - `BasicAIStrategy` 구현으로 AI 행동 결정 로직 분리
+  - Trainer에 `aiStrategy` 필드 추가 및 getter/setter 제공
+  - BattleManager의 `getRivalAction()` 메서드 간소화
+- **파일**: `AIStrategy.java`, `BasicAIStrategy.java` 신규 생성
+- **이점**: AI 전략 교체 용이성 증대, 테스트 가능성 향상
+
+### 4. **God Object 감소** ✅ (부분적)
+- **문제**: BattleManager 클래스가 배틀 로직, 턴 관리, UI 출력 등을 모두 담당
+- **해결**:
+  - AI Strategy 분리로 의존성 감소
+  - GameUtils 추출로 유틸리티 분리
+- **추가 개선 가능**: 별도의 `BattleUI` 클래스로 UI 로직 분리 (향후 과제)
+
+### 5. **타입별 포켓몬 간소화** ✅
+- **현황**: FirePokemon, WaterPokemon, GrassPokemon 클래스가 각각 간단한 구조(Type만 다름)
+- **의도된 설계**: 타입별로 명확히 분리하여 확장 가능성 유지
+- **매직 넘버**: 의도적으로 유지 (제3자 요청)
+
+## 📈 개선 전후 비교
+
+| 항목 | 개선 전 | 개선 후 |
+|------|--------|--------|
+| **유틸리티 메서드 중복** | 3개 클래스에 분산 | GameUtils로 통합 |
+| **Encapsulation 위반** | getParty()[index] 직접 접근 | getPokemon(index) 메서드 사용 |
+| **AI 로직 결합도** | BattleManager에 혼재 | AIStrategy 인터페이스로 분리 |
+| **클래스 개수** | 11개 | 13개 (AIStrategy, BasicAIStrategy, GameUtils 추가) |
+| **코드 응집도** | 낮음 | 중간 |
+| **확장성** | 낮음 (AI 전략 변경 어려움) | 높음 (Strategy 추가 용이) |
+
+## 🚀 향후 개선 가능 사항
+
+1. **BattleUI 클래스 추출**
+   - 배틀 화면 출력 로직을 별도 클래스로 분리
+   - printBattleStatus(), executeAttack의 출력 부분 통합
+
+2. **Advanced AI Strategy 추가**
+   - 예측 AI: 향후 상황 예측
+   - 공격형/방어형/균형형 전략 선택
+
+3. **State 패턴 적용**
+   - 배틀 상태(준비, 진행, 종료) 관리 개선
+
+4. **Factory 메서드 패턴 확장**
+   - 새로운 포켓몬 추가 시 clonePokemon 수정 불필요
+
+## �📌 추후 개선 사항 (선택사항)
 
 - [ ] 데이터베이스를 이용한 포켓몬 저장
 - [ ] GUI 구현 (Swing/JavaFX)

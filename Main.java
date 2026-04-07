@@ -4,6 +4,9 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        // 게임 유틸리티 초기화
+        new GameUtils(scanner);
+
         printTitle();
 
         boolean playAgain = true;
@@ -29,7 +32,7 @@ public class Main {
                 System.out.print(rivalParty[i].getDisplayName());
             }
             System.out.println("]");
-            pause(1500);
+            GameUtils.pause(1500);
 
             // 배틀 시작
             BattleManager battle = new BattleManager(player, rival, scanner);
@@ -73,7 +76,7 @@ public class Main {
             while (true) {
                 String[] ordinal = {"첫", "두", "세"};
                 System.out.printf("▶ %s 번째 포켓몬 번호 (1~%d): ", ordinal[i], pokedex.length);
-                int choice = getValidInput(1, pokedex.length);
+                int choice = GameUtils.getValidInput(1, pokedex.length);
 
                 if (selected[choice - 1]) {
                     System.out.println("  ❌ 이미 선택한 포켓몬입니다. 다른 포켓몬을 선택하세요.");
@@ -102,7 +105,7 @@ public class Main {
         Pokemon[] party = new Pokemon[3];
 
         // 각 속성에서 1마리씩 선택 (밸런스 있는 파티)
-        int[] typeOrder = getRandomOrder(3);
+        int[] typeOrder = GameUtils.getRandomOrder(3);
 
         // 불 타입 중 랜덤 (인덱스 0,1)
         int fireChoice = (int) (Math.random() * 2);
@@ -119,40 +122,5 @@ public class Main {
         }
 
         return party;
-    }
-
-    // 랜덤 순서 생성
-    private static int[] getRandomOrder(int n) {
-        int[] order = new int[n];
-        for (int i = 0; i < n; i++) order[i] = i;
-        for (int i = n - 1; i > 0; i--) {
-            int j = (int) (Math.random() * (i + 1));
-            int temp = order[i];
-            order[i] = order[j];
-            order[j] = temp;
-        }
-        return order;
-    }
-
-    // 유효 입력
-    private static int getValidInput(int min, int max) {
-        while (true) {
-            try {
-                String line = scanner.nextLine().trim();
-                int val = Integer.parseInt(line);
-                if (val >= min && val <= max) return val;
-                System.out.printf("  ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.printf("  ❌ %d~%d 사이의 숫자를 입력하세요: ", min, max);
-            }
-        }
-    }
-
-    private static void pause(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            // 무시
-        }
     }
 }
