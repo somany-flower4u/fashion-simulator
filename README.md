@@ -133,6 +133,7 @@ java Main
 
 ---
 
-**개발자**: 팀 프로젝트  
+**개발자**: 홍익대학교 소프트웨어융합학과 김태빈, 이호진, 전지민, 장재경 
 **언어**: Java  
 **디자인 패턴**: Factory, Strategy, Enum
+본 README.md 파일은 Claude Haiku 4.5를 이용하여 작성함.
