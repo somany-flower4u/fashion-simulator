@@ -1,20 +1,12 @@
 import java.util.Scanner;
 
-/**
- * 게임 전역 유틸리티 클래스
- * - 입력 검증
- * - 시간 지연
- */
-public class GameUtils {
+public class ConsoleUtils {
     private static Scanner scanner;
 
-    public GameUtils(Scanner s) {
+    public ConsoleUtils(Scanner s) {
         scanner = s;
     }
 
-    /**
-     * 유효한 범위의 정수 입력 받기
-     */
     public static int getValidInput(int min, int max) {
         while (true) {
             try {
@@ -28,20 +20,14 @@ public class GameUtils {
         }
     }
 
-    /**
-     * 지정된 밀리초만큼 일시정지
-     */
     public static void pause(int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
-            // 무시
+            // ignore
         }
     }
 
-    /**
-     * 무작위 순서 배열 생성 (Fisher-Yates shuffle)
-     */
     public static int[] getRandomOrder(int n) {
         int[] order = new int[n];
         for (int i = 0; i < n; i++) order[i] = i;
