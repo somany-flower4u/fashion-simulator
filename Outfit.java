@@ -18,10 +18,4 @@ public class Outfit {
     public ClothingItem getTop() { return top; }
     public ClothingItem getBottom() { return bottom; }
     public ClothingItem getOuter() { return outer; }
-
-    public void printOutfit() {
-        System.out.println("  👕 상의: " + top.getDisplayName());
-        System.out.println("  👖 하의: " + bottom.getDisplayName());
-        System.out.println("  🧥 아우터: " + outer.getDisplayName());
-    }
 }

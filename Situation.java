@@ -13,11 +13,11 @@ public class Situation {
         double weight = 1.0;
         if (temperature < 5) weight += 1.5;
         else if (temperature < 15) weight += 0.5;
-        else if (temperature > 30) weight -= 0.5;
+        else if (temperature > 30) weight -= 1.5;
 
         if (weather == Weather.SNOWY || weather == Weather.COLD) weight += 0.5;
-        if (weather == Weather.HOT) weight -= 0.5;
-        return Math.max(0.1, weight);
+        if (weather == Weather.HOT) weight -= 1.0;
+        return weight;
     }
 
     public double getWaterResistanceWeight() {

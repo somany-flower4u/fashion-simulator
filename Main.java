@@ -1,23 +1,22 @@
 import java.util.Scanner;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
-        new ConsoleUtils(scanner);
+        Scanner scanner = new Scanner(System.in);
 
         printTitle();
 
         boolean repeat = true;
         while (repeat) {
-            ClothingItem[] tops = ClothingFactory.createAllTops();
-            ClothingItem[] bottoms = ClothingFactory.createAllBottoms();
-            ClothingItem[] outers = ClothingFactory.createAllOuters();
+            ClothingItem[] tops = Wardrobe.Factory.createAllTops();
+            ClothingItem[] bottoms = Wardrobe.Factory.createAllBottoms();
+            ClothingItem[] outers = Wardrobe.Factory.createAllOuters();
 
             Wardrobe wardrobe = new Wardrobe("사용자", tops, bottoms, outers);
-            wardrobe.printWardrobe();
 
-            OutfitRecommender recommender = new OutfitRecommender(wardrobe, new BasicRecommendStrategy(), scanner);
+            RecommendStrategy strategy = new RecommendStrategy.Basic();
+            OutfitRecommender recommender = new OutfitRecommender(wardrobe, strategy, scanner);
+            recommender.printWardrobe();
             recommender.startRecommendation();
 
             System.out.print("\n▶ 다른 상황으로 다시 추천받으시겠습니까? (Y/N): ");
