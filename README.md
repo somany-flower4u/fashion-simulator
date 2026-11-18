@@ -75,7 +75,6 @@ Outfit.java              상의+하의+아우터 한 벌 조합과 총점
 Situation.java           날씨·일정·기온과 가중치 계산
 Category.java Weather.java Schedule.java   enum
 Diagram/                 클래스 다이어그램, 순차도 (Mermaid)
-class/                   컴파일된 .class 파일
 run.sh, run.bat          컴파일과 실행 스크립트
 ```
 
